@@ -1,0 +1,3 @@
+Emulator-only audio mode driver used by voice113_smoke.py. Not part of the application/APK and never installed on a physical phone.
+Compile AudioMode.java against android.jar, D8 classes to classes.dex, aapt2 link manifest, insert classes.dex, sign with a disposable/debug key, and install to an explicit emulator serial. Run `adb -s emulator-5558 shell cmd notification allow_dnd kr.personal.usagitest` before the test. The driver uses public AudioManager APIs to set ringer/volume; production UsagiFloat has neither these permissions nor changes system audio settings. Do not use am start -W with the NoDisplay driver; it finishes before a window appears.
+Restore emulator to normal mode/volume5/DNDoff after testing and uninstall kr.personal.usagitest.

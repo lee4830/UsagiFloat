@@ -21,6 +21,7 @@ public class CompanionService extends Service {
  private WindowManager.LayoutParams petParams,homeTargetParams;
  private int currentCharacter=-1,lastManualCharacter=-1,decodedTarget;
  private RandomRotation randomRotation;
+ private TapVoice voice;
  private AutoStop autoStop;private boolean timerInitialized;
  private RestCycle restCycle;private boolean resting,petVisible;
  private WanderMotion wanderMotion;private WanderDrawable wanderDrawable;private boolean wanderEnabled;private int wanderPose=3,wanderFrame;
@@ -43,6 +44,7 @@ public class CompanionService extends Service {
  };
  private int dp(float n){return Math.round(n*getResources().getDisplayMetrics().density);}
  @Override public void onCreate(){super.onCreate();wm=getSystemService(WindowManager.class);prefs=getSharedPreferences("companion",MODE_PRIVATE);slop=ViewConfiguration.get(this).getScaledTouchSlop();
+  voice=new TapVoice(this,prefs);
   autoStop=new AutoStop(new AutoStop.Environment(){public long now(){return SystemClock.elapsedRealtime();}public void postDelayed(Runnable r,long ms){handler.postDelayed(r,ms);}public void removeCallbacks(Runnable r){handler.removeCallbacks(r);}public void expire(){stopSelf();}});
   wanderMotion=new WanderMotion(new WanderMotion.Environment(){
    public long now(){return SystemClock.uptimeMillis();}
@@ -87,6 +89,7 @@ public class CompanionService extends Service {
   try{
    String action=intent==null?null:intent.getAction();
    if(!timerInitialized||START.equals(action)||TIMER.equals(action)){autoStop.arm(timerDuration());timerInitialized=true;}else if(!autoStop.check())return START_NOT_STICKY;
+   voice.refresh();
    restCycle.configure(prefs.getBoolean("power_saving",false));
    if(pet==null)createPet();else resize();
    applyMode();visibilityLoop.start();
@@ -187,7 +190,7 @@ public class CompanionService extends Service {
   autoStop.setPaused(!getSystemService(PowerManager.class).isInteractive());
   if(pet==null||!autoStop.check())return;
   petVisible=show;
-  if(!show){restCycle.setVisible(false);syncPlayback();cancelGesture();if(petRoot.getVisibility()!=View.INVISIBLE)petRoot.setVisibility(View.INVISIBLE);return;}
+  if(!show){voice.stop();restCycle.setVisible(false);syncPlayback();cancelGesture();if(petRoot.getVisibility()!=View.INVISIBLE)petRoot.setVisibility(View.INVISIBLE);return;}
   if(petRoot.getVisibility()!=View.VISIBLE){
    updateBounds();clampPosition();syncWanderPosition();if(!updatePet())return;
    petRoot.setVisibility(View.VISIBLE);pet.requestLayout();pet.invalidate();
@@ -218,8 +221,9 @@ public class CompanionService extends Service {
     petParams.x=originalX+Math.round(e.getRawX()-downX);petParams.y=originalY+Math.round(e.getRawY()-downY);clampPosition();updatePet();
     if(homeTarget!=null)homeTarget.setActive(overHomeTarget());return true;
    case MotionEvent.ACTION_UP:
+    gesture.move(e.getRawX(),e.getRawY(),slop);boolean tap=VoicePolicy.tap(gesture.canLongPress(),e.getEventTime()-e.getDownTime())&&view==pet;
     handler.removeCallbacks(hold);boolean remove=gesture.release(overHomeTarget());hideHomeTarget();savePosition();
-    if(remove)stopSelf();else {syncWanderPosition();restCycle.setHeld(false);wanderMotion.setHeld(false);view.postInvalidateOnAnimation();view.performClick();}return true;
+    if(remove)stopSelf();else {syncWanderPosition();restCycle.setHeld(false);wanderMotion.setHeld(false);view.postInvalidateOnAnimation();view.performClick();if(tap&&petVisible)voice.play();}return true;
    case MotionEvent.ACTION_CANCEL:
    case MotionEvent.ACTION_POINTER_DOWN:
     cancelGesture();savePosition();return true;
@@ -240,13 +244,15 @@ public class CompanionService extends Service {
  private int petSide(){return PetSize.side(prefs.getInt("size",120),getResources().getDisplayMetrics().density,prefs.getBoolean("wander_enabled",false),safe.width(),safe.height(),captionHeight());}
  private void resize(){cancelGesture();updateBounds();int size=petSide();petParams.width=size;petParams.height=size+captionHeight();if(pet.getLayoutParams().width!=size)pet.setLayoutParams(new FrameLayout.LayoutParams(size,size));timerCaption.setMaxWidth(size-dp(8));updateCaption();clampPosition();syncWanderPosition();updatePet();savePosition();}
  @Override public void onConfigurationChanged(Configuration config){super.onConfigurationChanged(config);if(pet!=null)resize();}
- @Override public void onDestroy(){running=false;if(restCycle!=null)restCycle.stop();if(autoStop!=null)autoStop.stop();if(wanderMotion!=null)wanderMotion.stop();if(randomRotation!=null)randomRotation.stop();if(visibilityLoop!=null)visibilityLoop.stop();handler.removeCallbacksAndMessages(null);gesture.cancel();hideHomeTarget();savePosition();
+ @Override public void onDestroy(){running=false;if(voice!=null)voice.close();if(restCycle!=null)restCycle.stop();if(autoStop!=null)autoStop.stop();if(wanderMotion!=null)wanderMotion.stop();if(randomRotation!=null)randomRotation.stop();if(visibilityLoop!=null)visibilityLoop.stop();handler.removeCallbacksAndMessages(null);gesture.cancel();hideHomeTarget();savePosition();
   if(animation!=null){animation.stop();animation=null;}
   if(pet!=null){pet.setOnTouchListener(null);pet.setImageDrawable(null);try{if(petRoot.isAttachedToWindow())wm.removeView(petRoot);}catch(IllegalArgumentException ignored){}pet=null;petRoot=null;timerCaption=null;}
   if(receiverRegistered)unregisterReceiver(screenReceiver);if(ops!=null)ops.stopWatchingMode(permissionListener);
   stopForeground(STOP_FOREGROUND_REMOVE);super.onDestroy();
  }
  @Override protected void dump(java.io.FileDescriptor fd,java.io.PrintWriter writer,String[] args){
+  if(voice!=null)voice.dump(writer);
+  writer.println("voiceEnabled="+prefs.getBoolean("tap_voice",false));writer.println("voiceAllowed="+(voice!=null&&voice.allowed()));writer.println("voiceActive="+(voice!=null&&voice.active()));writer.println("voicePlayed="+(voice==null?0:voice.played));
   handler.dump(new android.util.PrintWriterPrinter(writer),"appHandler ");
   writer.println("interactive="+getSystemService(PowerManager.class).isInteractive());
   writer.println("timerCaptionVisible="+(timerCaption!=null&&petVisible&&timerCaption.getVisibility()==View.VISIBLE));

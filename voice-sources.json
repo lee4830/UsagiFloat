@@ -1,0 +1,62 @@
+[
+  {
+    "name": "yaha",
+    "page": "https://www.myinstants.com/en/instant/usagi-yahaaaaaa-49847/",
+    "download": "https://www.myinstants.com/media/sounds/usagi-yahaaaaaa.mp3",
+    "duration": 3.336
+  },
+  {
+    "name": "una",
+    "page": "https://www.myinstants.com/en/instant/chiikawa-usagi-una-63012/",
+    "download": "https://www.myinstants.com/media/sounds/chiikawa-usagi-una.mp3",
+    "duration": 0.672
+  },
+  {
+    "name": "puru",
+    "page": "https://www.myinstants.com/en/instant/bryy-79320/",
+    "download": "https://www.myinstants.com/media/sounds/bryy.mp3",
+    "duration": 1.194667
+  },
+  {
+    "name": "haa",
+    "page": "https://www.myinstants.com/en/instant/haaaa-36151/",
+    "download": "https://www.myinstants.com/media/sounds/haaaa_lIY9Bpp.mp3",
+    "duration": 1.194667
+  },
+  {
+    "name": "wuu",
+    "page": "https://www.myinstants.com/en/instant/wuuulaaaa-10860/",
+    "download": "https://www.myinstants.com/media/sounds/wuuulaaaa.mp3",
+    "duration": 1.877333
+  },
+  {
+    "name": "high",
+    "page": "https://www.myinstants.com/en/instant/wula-high-note-51138/",
+    "download": "https://www.myinstants.com/media/sounds/wula-high-note.mp3",
+    "duration": 0.896
+  },
+  {
+    "name": "intro",
+    "page": "https://www.youtube.com/watch?v=_StPf8piYqU",
+    "start": 0,
+    "end": 3.5,
+    "duration": 3.5,
+    "note": "User reference; original background effects may remain."
+  },
+  {
+    "name": "kkiyat",
+    "page": "https://www.youtube.com/watch?v=_StPf8piYqU",
+    "start": 18.82,
+    "end": 20.38,
+    "duration": 1.5599999999999987,
+    "note": "User reference; original background effects may remain."
+  },
+  {
+    "name": "owung",
+    "page": "https://www.youtube.com/watch?v=_StPf8piYqU",
+    "start": 24.62,
+    "end": 25.95,
+    "duration": 1.3299999999999983,
+    "note": "User reference; original background effects may remain."
+  }
+]
