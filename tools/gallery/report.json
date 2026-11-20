@@ -25,10 +25,20 @@
       232,
       240
     ],
-    "scale": 1.9166666666666667,
+    "scale": 2.1062271062271063,
     "canvas": [
-      512,
-      512
+      640,
+      640
+    ],
+    "body_reference_width": 273,
+    "body_target_width": 300,
+    "body_anchor": [
+      320,
+      420
+    ],
+    "offset": [
+      98,
+      86
     ]
   },
   {
@@ -62,10 +72,20 @@
       259,
       290
     ],
-    "scale": 1.7037037037037037,
+    "scale": 1.5488215488215489,
     "canvas": [
-      512,
-      512
+      640,
+      640
+    ],
+    "body_reference_width": 330,
+    "body_target_width": 300,
+    "body_anchor": [
+      320,
+      420
+    ],
+    "offset": [
+      138,
+      148
     ]
   },
   {
@@ -96,8 +116,18 @@
     ],
     "scale": 1.8473895582329318,
     "canvas": [
-      512,
-      512
+      640,
+      640
+    ],
+    "body_reference_width": 300,
+    "body_target_width": 300,
+    "body_anchor": [
+      320,
+      420
+    ],
+    "offset": [
+      110,
+      121
     ]
   },
   {
@@ -143,10 +173,20 @@
       282,
       282
     ],
-    "scale": 1.6312056737588652,
+    "scale": 1.0638297872340425,
     "canvas": [
-      512,
-      512
+      640,
+      640
+    ],
+    "body_reference_width": 460,
+    "body_target_width": 300,
+    "body_anchor": [
+      320,
+      420
+    ],
+    "offset": [
+      170,
+      228
     ]
   },
   {
@@ -238,10 +278,20 @@
       480,
       480
     ],
-    "scale": 0.9583333333333334,
+    "scale": 0.6318681318681318,
     "canvas": [
-      512,
-      512
+      640,
+      640
+    ],
+    "body_reference_width": 455,
+    "body_target_width": 300,
+    "body_anchor": [
+      320,
+      420
+    ],
+    "offset": [
+      167,
+      259
     ]
   },
   {
@@ -282,10 +332,20 @@
       109,
       117
     ],
-    "scale": 4.423076923076923,
+    "scale": 3.949175824175825,
     "canvas": [
-      512,
-      512
+      640,
+      640
+    ],
+    "body_reference_width": 336,
+    "body_target_width": 300,
+    "body_anchor": [
+      320,
+      420
+    ],
+    "offset": [
+      131,
+      135
     ]
   },
   {
@@ -325,10 +385,20 @@
       121,
       118
     ],
-    "scale": 4.070796460176991,
+    "scale": 4.2850489054494645,
     "canvas": [
-      512,
-      512
+      640,
+      640
+    ],
+    "body_reference_width": 285,
+    "body_target_width": 300,
+    "body_anchor": [
+      320,
+      420
+    ],
+    "offset": [
+      84,
+      125
     ]
   },
   {
@@ -416,10 +486,20 @@
       464,
       498
     ],
-    "scale": 1.0021786492374727,
+    "scale": 0.7535177813815583,
     "canvas": [
-      512,
-      512
+      640,
+      640
+    ],
+    "body_reference_width": 399,
+    "body_target_width": 300,
+    "body_anchor": [
+      320,
+      420
+    ],
+    "offset": [
+      170,
+      180
     ]
   },
   {
@@ -445,10 +525,20 @@
       149,
       153
     ],
-    "scale": 3.3333333333333335,
+    "scale": 3.1746031746031744,
     "canvas": [
-      512,
-      512
+      640,
+      640
+    ],
+    "body_reference_width": 315,
+    "body_target_width": 300,
+    "body_anchor": [
+      320,
+      420
+    ],
+    "offset": [
+      169,
+      140
     ]
   },
   {
@@ -481,10 +571,20 @@
       194,
       226
     ],
-    "scale": 2.3,
+    "scale": 2.262295081967213,
     "canvas": [
-      512,
-      512
+      640,
+      640
+    ],
+    "body_reference_width": 305,
+    "body_target_width": 300,
+    "body_anchor": [
+      320,
+      420
+    ],
+    "offset": [
+      163,
+      131
     ]
   },
   {
@@ -573,10 +673,20 @@
       498,
       353
     ],
-    "scale": 0.9236947791164659,
+    "scale": 1.1546184738955825,
     "canvas": [
-      512,
-      512
+      640,
+      640
+    ],
+    "body_reference_width": 240,
+    "body_target_width": 300,
+    "body_anchor": [
+      320,
+      420
+    ],
+    "offset": [
+      28,
+      192
     ]
   },
   {
@@ -619,10 +729,20 @@
       468,
       498
     ],
-    "scale": 1.0478359908883828,
+    "scale": 0.9979390389413169,
     "canvas": [
-      512,
-      512
+      640,
+      640
+    ],
+    "body_reference_width": 315,
+    "body_target_width": 300,
+    "body_anchor": [
+      320,
+      420
+    ],
+    "offset": [
+      130,
+      140
     ]
   }
 ]

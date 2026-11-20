@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 public class OverlayVisibilityLoopTest {
  static class Device implements OverlayVisibilityLoop.Environment {
   boolean awake=true,locked=false,visible; Runnable pending;
+  public boolean isInteractive(){return awake;}
   public boolean canShow(){return awake&&!locked;}
   public void applyVisibility(boolean show){visible=show;}
   public void postDelayed(Runnable task,long delay){assertNull("Only one callback may be queued",pending);pending=task;}
@@ -29,4 +30,5 @@ public class OverlayVisibilityLoopTest {
   Device d=new Device();OverlayVisibilityLoop loop=new OverlayVisibilityLoop(d);loop.start();loop.refresh();loop.refresh();
   assertNotNull(d.pending);d.elapse();assertNotNull(d.pending);
  }
+ @Test public void screenOffAndRepeatedStartLeaveNoPolling(){Device d=new Device();OverlayVisibilityLoop l=new OverlayVisibilityLoop(d);l.start();d.awake=false;l.refresh();assertFalse(d.visible);assertNull(d.pending);l.start();assertNull(d.pending);d.awake=true;d.locked=true;l.refresh();assertNotNull(d.pending);d.locked=false;d.elapse();assertTrue(d.visible);}
 }

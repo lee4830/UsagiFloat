@@ -1,3 +1,6 @@
+Body calibration1.0.10
+body-calibration.json records the main rounded-body width/centre and independent measurement row in1.0.9reference coordinates. normalization109.json maps these back to original source pixels. process.py reads original inputs, masks them, and applies one fixed transform per sequence onto640px canvas,300px reference body width, common anchor(320,420). Manual window/preview reserve640/512times the former space, so ear padding does not shrink the body. verify.py independently measures alpha row spans (296–316px) and checks original timing and unclipped margins. Existing source-edge crops are preserved.
+
 Manual gallery1.0.9
 
 Uses Pillow, NumPy, OpenCV. Install the pinned dependencies from ../cutouts/requirements.txt in a local virtual environment.
@@ -12,4 +15,4 @@ To install processed output after visual review:
   Copy generated/report.json here, then run python verify.py.
 verify.py checks frame totals/timing, transparent canvas and fixed silhouette bounds, and writes gallery-preview.jpg.
 
-All frames share a fixed crop and scale per animation.512px output canvas with460px maximum sequence extent retains movement and avoids per-frame zoom. Small sources are enlarged with Lanczos interpolation; missing details are not reconstructed. Source proportions and preexisting cropped composition remain. Alpha is generated around original character color/ink pixels, without repainting the character.
+All frames share a fixed crop and scale per animation.640px output canvas with300px calibrated body width retains movement and avoids per-frame zoom. Small sources are enlarged with Lanczos interpolation; missing details are not reconstructed. Source proportions and preexisting cropped composition remain. Alpha is generated around original character color/ink pixels, without repainting the character.

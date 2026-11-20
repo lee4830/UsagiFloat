@@ -1,0 +1,107 @@
+{
+  "coordinate_system": "1.0.9 normalized512px reference frame0; main rounded body excludes ears, tails, fans and motion trails",
+  "target_body_width": 300,
+  "canvas": 640,
+  "anchor": [
+    320,
+    420
+  ],
+  "items": {
+    "usagi": {
+      "width": 273,
+      "centre": [
+        270,
+        330
+      ],
+      "measure_row": 250
+    },
+    "usagi_soft": {
+      "width": 330,
+      "centre": [
+        235,
+        325
+      ],
+      "measure_row": 250
+    },
+    "usagi_cheer": {
+      "width": 300,
+      "centre": [
+        260,
+        325
+      ],
+      "measure_row": 250
+    },
+    "usagi_closeup": {
+      "width": 460,
+      "centre": [
+        256,
+        320
+      ],
+      "measure_row": 300
+    },
+    "usagi_hood": {
+      "width": 455,
+      "centre": [
+        258,
+        270
+      ],
+      "measure_row": 250
+    },
+    "usagi_huh": {
+      "width": 336,
+      "centre": [
+        267,
+        345
+      ],
+      "measure_row": 300
+    },
+    "usagi_puri": {
+      "width": 285,
+      "centre": [
+        250,
+        320
+      ],
+      "measure_row": 250
+    },
+    "usagi_forest": {
+      "width": 399,
+      "centre": [
+        250,
+        345
+      ],
+      "measure_row": 350
+    },
+    "usagi_tiny": {
+      "width": 315,
+      "centre": [
+        236,
+        320
+      ],
+      "measure_row": 250
+    },
+    "usagi_room": {
+      "width": 305,
+      "centre": [
+        255,
+        320
+      ],
+      "measure_row": 250
+    },
+    "usagi_ears": {
+      "width": 240,
+      "centre": [
+        260,
+        275
+      ],
+      "measure_row": 200
+    },
+    "usagi_dance": {
+      "width": 315,
+      "centre": [
+        245,
+        320
+      ],
+      "measure_row": 250
+    }
+  }
+}

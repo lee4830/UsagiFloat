@@ -38,7 +38,7 @@ public class MainActivity extends Activity {
   TextView title=text("우사기 둥둥",32,ink);title.setTypeface(null,Typeface.BOLD);root.addView(title);gap(root,8);
   root.addView(text("좋아하는 화면 위에\n우사기를 살짝 띄워 보세요.",16,muted));gap(root,18);
   LinearLayout card=new LinearLayout(this);card.setGravity(Gravity.CENTER);card.setOrientation(LinearLayout.VERTICAL);card.setBackground(background(0xffffefc2,28));card.setPadding(0,dp(12),0,dp(14));
-  ImageView image=new ImageView(this);image.setScaleType(ImageView.ScaleType.FIT_CENTER);image.setContentDescription("우사기 애니메이션 미리보기");card.addView(image,new LinearLayout.LayoutParams(dp(154),dp(154)));
+  ImageView image=new ImageView(this);image.setScaleType(ImageView.ScaleType.FIT_CENTER);image.setContentDescription("우사기 애니메이션 미리보기");card.addView(image,new LinearLayout.LayoutParams(dp(192.5f),dp(192.5f)));
   try{preview=Art.load(this,image);}catch(Exception e){image.setImageResource(R.drawable.usagi_face);}
   TextView caption=text("꾹 누르고, 쏙 옮겨요",13,muted);caption.setGravity(Gravity.CENTER);card.addView(caption);root.addView(card);gap(root,20);
   root.addView(text("움직임 모드",14,ink));
@@ -117,6 +117,7 @@ public class MainActivity extends Activity {
   });
   Runnable modeControls=()->{
    boolean strolling=prefs.getBoolean("wander_enabled",false);
+   int previewSide=dp(strolling?154:192.5f);image.setLayoutParams(new LinearLayout.LayoutParams(previewSide,previewSide));
    wanderSettings.setVisibility(strolling?View.VISIBLE:View.GONE);manualSettings.setVisibility(strolling?View.GONE:View.VISIBLE);
    intervalSettings.setVisibility(!strolling&&randomMode.isChecked()?View.VISIBLE:View.GONE);
    if(strolling){seconds.clearFocus();((android.view.inputmethod.InputMethodManager)getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(seconds.getWindowToken(),0);}
@@ -143,7 +144,7 @@ public class MainActivity extends Activity {
  private void updateRunningCompanion(){
   if(CompanionService.running)startService(new Intent(this,CompanionService.class).setAction(CompanionService.UPDATE));
  }
- private void updateSize(int size){sizeLabel.setText("캐릭터 크기  ·  "+size+" dp");}
+ private void updateSize(int size){sizeLabel.setText("몸통 기준 크기  ·  "+size);}
  private void launch(){try{startForegroundService(new Intent(this,CompanionService.class).setAction(CompanionService.START));finishAndRemoveTask();}catch(RuntimeException e){Toast.makeText(this,"시작하지 못했어요. 표시 권한을 확인해 주세요.",Toast.LENGTH_LONG).show();}}
  @Override public void onRequestPermissionsResult(int r,String[] p,int[] grants){super.onRequestPermissionsResult(r,p,grants);if(r==7)launch();}
  @Override protected void onResume(){super.onResume();showing=true;resumed=true;boolean granted=Settings.canDrawOverlays(this);status.setText(granted?"●  표시 권한 허용됨 · 시작할 수 있어요":"○  먼저 다른 앱 위 표시를 허용해 주세요");start.setAlpha(granted?1f:.55f);if(preview!=null&&!prefs.getBoolean("wander_enabled",false))preview.start();}

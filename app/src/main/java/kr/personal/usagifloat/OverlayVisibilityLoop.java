@@ -3,6 +3,7 @@ package kr.personal.usagifloat;
  * Handler delays use uptime: this loop does not wake a sleeping device. */
 final class OverlayVisibilityLoop {
  interface Environment {
+  boolean isInteractive();
   boolean canShow();
   void applyVisibility(boolean show);
   void postDelayed(Runnable task,long delay);
@@ -17,7 +18,7 @@ final class OverlayVisibilityLoop {
   env.removeCallbacks(check);
   if(!active)return;
   env.applyVisibility(env.canShow());
-  if(active)env.postDelayed(check,1000);
+  if(active&&env.isInteractive())env.postDelayed(check,1000);
  }
  void stop(){active=false;env.removeCallbacks(check);}
 }

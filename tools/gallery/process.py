@@ -27,6 +27,8 @@ def cut(im,key):
  return Image.merge('RGBA',(*im.convert('RGB').split(),alpha))
 
 def main():
+ calibration=json.loads((Path(__file__).parent/"body-calibration.json").read_text())
+ references={v["key"]:v for v in json.loads((Path(__file__).parent/"normalization109.json").read_text())}
  ROOT.mkdir(parents=True,exist_ok=True);report=[]
  for key,name,old in ITEMS:
   if os.environ.get('USAGI_ONLY') and key not in os.environ['USAGI_ONLY'].split(','):continue
@@ -38,17 +40,23 @@ def main():
   boxes=[f.getchannel('A').point(lambda p:255 if p>24 else 0).getbbox() for f in frames]
   assert all(boxes),(key,'empty frame')
   box=(min(b[0] for b in boxes),min(b[1] for b in boxes),max(b[2] for b in boxes),max(b[3] for b in boxes))
-  w,h=box[2]-box[0],box[3]-box[1];scale=460/max(w,h);size=(round(w*scale),round(h*scale));out=[]
+  w,h=box[2]-box[0],box[3]-box[1]
+  ref=references[key];body=calibration['items'][key];factor=300/body['width']
+  pad=((512-round(w*ref['scale']))//2,(512-round(h*ref['scale']))//2)
+  scale=ref['scale']*factor;size=(round(w*scale),round(h*scale))
+  offset=(round(320-(body['centre'][0]-pad[0])*factor),round(420-(body['centre'][1]-pad[1])*factor))
+  assert offset[0]>=12 and offset[1]>=12 and offset[0]+size[0]<=628 and offset[1]+size[1]<=628,(key,size,offset)
+  out=[]
   for f in frames:
    f=f.crop(box).resize(size,Image.Resampling.LANCZOS)
-   canvas=Image.new('RGBA',(512,512));canvas.paste(f,((512-size[0])//2,(512-size[1])//2));out.append(canvas)
+   canvas=Image.new('RGBA',(640,640));canvas.paste(f,offset);out.append(canvas)
   out[0].save(ROOT/(key+'.webp'),save_all=True,append_images=out[1:],duration=dur,loop=0,lossless=True,method=4)
   out[0].resize((144,144),Image.Resampling.LANCZOS).save(ROOT/(key+'_thumb.png'))
   ids=list(range(0,len(out),max(1,len(out)//12)));sheet=Image.new('RGB',(960,((len(ids)+5)//6)*180),'#505466');d=ImageDraw.Draw(sheet)
   for j,i in enumerate(ids):
    f=out[i].resize((156,156));sheet.paste(f,(j%6*160,j//6*180),f);d.text((j%6*160,j//6*180+156),str(i),fill='white')
   sheet.save(ROOT/(key+'-contact.jpg'))
-  report.append(dict(key=key,source=name,frames=len(frames),duration_ms=sum(dur),durations=dur,crop=box,scale=scale,canvas=[512,512]))
+  report.append(dict(key=key,source=name,frames=len(frames),duration_ms=sum(dur),durations=dur,crop=box,scale=scale,canvas=[640,640],body_reference_width=body['width'],body_target_width=300,body_anchor=[320,420],offset=offset))
   print(key,len(frames),box,'scale',round(scale,2),flush=True)
  previous=json.loads((ROOT/'report.json').read_text()) if (ROOT/'report.json').exists() else []
  keyed={v['key']:v for v in previous};keyed.update({v['key']:v for v in report})

@@ -31,10 +31,10 @@ public class CompanionService extends Service {
  private AppOpsManager ops;
  private final AppOpsManager.OnOpChangedListener permissionListener=(op,pkg)->handler.post(()->{if(!Settings.canDrawOverlays(this))stopSelf();});
  private final BroadcastReceiver screenReceiver=new BroadcastReceiver(){@Override public void onReceive(Context c,Intent i){
+  autoStop.setPaused(!getSystemService(PowerManager.class).isInteractive());
   if(!autoStop.check())return;
   cancelGesture();
-  if(Intent.ACTION_SCREEN_OFF.equals(i.getAction()))applyPetVisibility(false);
-  else if(visibilityLoop!=null)visibilityLoop.refresh();
+  if(visibilityLoop!=null)visibilityLoop.refresh();
  }};
  private final Runnable hold=()->{
   if(pet!=null && gesture.canLongPress()){
@@ -68,6 +68,7 @@ public class CompanionService extends Service {
    public void removeCallbacks(Runnable task){handler.removeCallbacks(task);}
   },new java.util.Random(),CharacterCatalog.NAMES.length);
   visibilityLoop=new OverlayVisibilityLoop(new OverlayVisibilityLoop.Environment(){
+   public boolean isInteractive(){return getSystemService(PowerManager.class).isInteractive();}
    public boolean canShow(){return (!wanderEnabled||!MainActivity.showing)&&getSystemService(PowerManager.class).isInteractive()&&!getSystemService(KeyguardManager.class).isKeyguardLocked();}
    public void applyVisibility(boolean show){applyPetVisibility(show);}
    public void postDelayed(Runnable task,long delay){handler.postDelayed(task,delay);}
@@ -118,7 +119,7 @@ public class CompanionService extends Service {
   }
  }
  private void createPet() throws java.io.IOException {
-  updateBounds();int size=dp(GestureState.clamp(prefs.getInt("size",120),80,200));
+  updateBounds();int size=petSide();
   petParams=params(size,size+captionHeight(),true);petParams.setTitle("Usagi companion");
   petParams.x=prefs.getInt("x",safe.right-size-dp(16));petParams.y=prefs.getInt("y",safe.top+dp(160));clampPosition();
   petRoot=new FrameLayout(this);
@@ -183,6 +184,7 @@ public class CompanionService extends Service {
   if(animation!=null){if(play&&!animation.isRunning())animation.start();else if(!play&&animation.isRunning())animation.stop();}
  }
  private void applyPetVisibility(boolean show){
+  autoStop.setPaused(!getSystemService(PowerManager.class).isInteractive());
   if(pet==null||!autoStop.check())return;
   petVisible=show;
   if(!show){restCycle.setVisible(false);syncPlayback();cancelGesture();if(petRoot.getVisibility()!=View.INVISIBLE)petRoot.setVisibility(View.INVISIBLE);return;}
@@ -235,7 +237,8 @@ public class CompanionService extends Service {
  }
  private void hideHomeTarget(){if(homeTarget!=null){try{if(homeTarget.isAttachedToWindow())wm.removeView(homeTarget);}catch(IllegalArgumentException ignored){}homeTarget=null;}}
  private void cancelGesture(){if(restCycle!=null)restCycle.setHeld(false);handler.removeCallbacks(hold);gesture.cancel();hideHomeTarget();syncWanderPosition();if(wanderMotion!=null)wanderMotion.setHeld(false);}
- private void resize(){cancelGesture();updateBounds();int size=dp(GestureState.clamp(prefs.getInt("size",120),80,200));petParams.width=size;petParams.height=size+captionHeight();if(pet.getLayoutParams().width!=size)pet.setLayoutParams(new FrameLayout.LayoutParams(size,size));timerCaption.setMaxWidth(size-dp(8));updateCaption();clampPosition();syncWanderPosition();updatePet();savePosition();}
+ private int petSide(){return PetSize.side(prefs.getInt("size",120),getResources().getDisplayMetrics().density,prefs.getBoolean("wander_enabled",false),safe.width(),safe.height(),captionHeight());}
+ private void resize(){cancelGesture();updateBounds();int size=petSide();petParams.width=size;petParams.height=size+captionHeight();if(pet.getLayoutParams().width!=size)pet.setLayoutParams(new FrameLayout.LayoutParams(size,size));timerCaption.setMaxWidth(size-dp(8));updateCaption();clampPosition();syncWanderPosition();updatePet();savePosition();}
  @Override public void onConfigurationChanged(Configuration config){super.onConfigurationChanged(config);if(pet!=null)resize();}
  @Override public void onDestroy(){running=false;if(restCycle!=null)restCycle.stop();if(autoStop!=null)autoStop.stop();if(wanderMotion!=null)wanderMotion.stop();if(randomRotation!=null)randomRotation.stop();if(visibilityLoop!=null)visibilityLoop.stop();handler.removeCallbacksAndMessages(null);gesture.cancel();hideHomeTarget();savePosition();
   if(animation!=null){animation.stop();animation=null;}
@@ -244,6 +247,8 @@ public class CompanionService extends Service {
   stopForeground(STOP_FOREGROUND_REMOVE);super.onDestroy();
  }
  @Override protected void dump(java.io.FileDescriptor fd,java.io.PrintWriter writer,String[] args){
+  handler.dump(new android.util.PrintWriterPrinter(writer),"appHandler ");
+  writer.println("interactive="+getSystemService(PowerManager.class).isInteractive());
   writer.println("timerCaptionVisible="+(timerCaption!=null&&petVisible&&timerCaption.getVisibility()==View.VISIBLE));
   writer.println("timerCaptionText="+(timerCaption==null?"":timerCaption.getText()));
   writer.println("powerSaving="+prefs.getBoolean("power_saving",false));
