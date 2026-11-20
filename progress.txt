@@ -1,0 +1,21 @@
+Plan: docs/superpowers/plans/2026-11-19-usagi.md
+User approved design and instructed execution.
+Ruling: Execute inline in newly isolated work/usagi project, no pre-existing repository or code. No extra approval needed for routine build choices.
+Pre-flight: Task 2 consumes Task 1 GestureState; Task 3 consumes Task 2 signed app. Interfaces consistent.
+Task 1: complete. Observed 3 assertion failures with stub geometry/state, then five passing tests; added cancellation regression (1 observed failure), then six passing tests.
+Task 2: built; device gesture smoke passed all five checks. Native preview and transparent overlay visually inspected.
+Review: independent reviewer found no critical/important issues. Multi-pointer movement after cancellation fixed by gating ACTION_MOVE on active gesture; regression test passes. Minor legacy Android 9/10 landscape inset approximation documented.
+Task 3: dedicated RSA3072 release key generated; Gradle testDebugUnitTest/assembleDebug/assembleRelease/lintRelease succeeded. apksigner verifies v2 signature. Signed APK device validation pending.
+Ruling: Rotation test initially assumed fixed 1s rotation and landscape-capable launcher. Device retained portrait. Revised test to use app Activity and wait for actual display ROTATION_90 before checking bounds; confirmed landscape frame inside 2400x1080.
+Additional validation: debug lifecycle tests confirmed restart, duplicate start, rotation, screen-off hiding and permission revocation cleanup. Test harness revised to wait for actual WindowManager layout / broadcast completion instead of assuming fixed short emulator delays. No production change needed for these timing findings.
+Task 3: complete. Exact signed release installed and seven release smoke checks passed. All deliverables packaged; no repository integration required for this standalone project.
+1.0.1 update approved: replace trash artwork/copy with home; repair screen wake recovery and repeated Start.
+User reports foreground notification remains, repeated Start fails, Stop then Start works. Source confirms invisible existing pet is not refreshed on START; screen recovery currently depends solely on broadcasts. Add periodic no-wakelock state reconciliation and immediate refresh for existing service. Keep stop behavior and dedicated signing key.
+1.0.1 complete: 10 unit tests pass; signed update installed without uninstall; 3 wake cycles, repeated Start, home dismissal and no resurrection pass. Same certificate verified. Independent update review found no critical/important findings.
+1.0.2 complete: added four assets and five-way selector, preview/persistence/live swap. User authorized deterministic image processing; 106 masked frames retain original RGB/timings. 12 unit tests, signed update, five-choice device screenshots, verified actual stop/restart and wake passed. Drawable validation made atomic following narrow review.
+1.0.3 plan: optional random mode (default off), editable 1..3600 second interval (default30), persisted settings applied live. Uniform choice among other four characters; preserve manual preference separately. Pause remaining interval while screen off/locked; defer during gestures. Deterministic scheduler tests first, then native UI/service integration, same-key signed update/device verification.
+1.0.3 complete:20 unit tests/build/lint pass; signed API31 device tests cover random2s transitions, hidden pause/unlock, modeoff, live4s interval + rejected0, persistence, touch deferral and stop cancellation. Narrow review no important findings. Same signing certificate verified.
+
+1.0.4 complete: postInvalidateOnAnimation after window relayout and nondismissing release. Shipped freeze reproduced API30/API31; exact final signed APK passes5-character drag/hold/wake pixel tests on both, API30 repeated-drag delayed checks and house dismissal, API31 random regression.20 unit tests and lint/build pass. Same certificate verified. No physical-device operations.
+
+1.0.5 complete: dedicated16-frame stroll atlas, bounded walking/look/wiggle/rest engine, three speeds, drag pause/drop delay, screen/settings hiding, manual/random restoration.28 unit tests/build/lint pass; API30 fullstroll andrandom tests pass; API31 stroll checks plus focused visible-house test pass. Same-key signed APK verified. No physical-device verification.

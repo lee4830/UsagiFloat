@@ -1,0 +1,19 @@
+Animation: user-supplied d25bfb1482b74f22b9c86ce1847b07b9.gif. Original bytes preserved, 258x258, 13 frames, 100ms per frame, transparent background.
+Icon: https://www.anime-chiikawa.jp/images/characters/bt_chara_03.png
+Source page: https://www.anime-chiikawa.jp/chara.html
+Retrieved: 2026-11-19
+Character artwork: © nagano / chiikawa committee. This is an unofficial personal-use app; no affiliation implied. Artwork rights are not transferred with the source code.
+
+1.0.2 user-supplied animations:
+usagi_soft.gif = eb9616d2535d4515aa36530dbb225ac6 (1).gif, original transparent GIF, 18 frames / 760ms.
+usagi_cheer.gif = f064bb269ae34b08a276d4baf4c35f6d.gif, original transparent GIF, 13 frames / 1300ms.
+usagi_closeup.webp = f8057a7825ae42459d58ec365b09050a.gif, per-frame background mask, 30 frames / 2100ms.
+usagi_hood.webp = a805c318ec76636da281cc625a1cae6b.gif, per-frame background mask, 76 frames / 5070ms.
+User explicitly authorized programmatic frame processing to retain original motion. Foreground RGB pixels unchanged; only alpha mask created, WebP lossless. Existing cropping and internal artwork text/effects retained.
+
+1.0.5 stroll artwork: res/drawable-nodpi/usagi_wander_sheet.png.
+AI-generated dedicated16-frame sheet using built-in image_gen and the existing Usagi identity reference; full prompt and frame layout in tools/wander/prompt.txt. Original source character remains ©nagano / chiikawa committee. This is unofficial personal software, not an official character animation release.
+
+1.0.6: res/drawable-nodpi/usagi_playful_sheet.png, new image_gen16-frame expressive sibling atlas using1.0.5 sheet as identity reference. Prompt: tools/wander/prompt-1.0.6.txt. User video references viewed for pacing and behavior (not downloaded or trained on): https://www.youtube.com/shorts/mwfyXAL1Alo and https://www.youtube.com/watch?v=309nc2qTfwE (opening roughly26seconds only).
+
+1.0.7 actual source-motion replacement: motion_walk/look/wiggle/bow.png. Derived character silhouettes from user-selected https://www.youtube.com/shorts/mwfyXAL1Alo and https://www.youtube.com/watch?v=309nc2qTfwE . Exact source ranges/frame counts and extraction method in tools/video-motion/README.txt and source-segments.json. No generated artwork is used by the active stroll renderer. Original artwork rights remain unchanged. Videos/audio not bundled.

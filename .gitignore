@@ -1,0 +1,14 @@
+.gradle/
+build/
+local.properties
+*.jks
+signing.properties
+.superpowers/
+*.keystore
+usagi-signing-backup.zip
+*.apk
+*.aab
+.DS_Store
+__pycache__/
+*.pyc
+.idea/
