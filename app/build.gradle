@@ -5,7 +5,7 @@ if (signingFile.exists()) signingFile.withInputStream { signingValues.load(it) }
 android {
     namespace 'kr.personal.usagifloat'
     compileSdk { version = release(36) { minorApiLevel = 1 } }
-    defaultConfig { applicationId 'kr.personal.usagifloat'; minSdk 28; targetSdk 36; versionCode 14; versionName '1.0.13' }
+    defaultConfig { applicationId 'kr.personal.usagifloat'; minSdk 28; targetSdk 36; versionCode 15; versionName '1.0.14' }
     compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
     signingConfigs {
         release {

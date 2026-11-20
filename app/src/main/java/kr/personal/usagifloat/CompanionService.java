@@ -252,7 +252,7 @@ public class CompanionService extends Service {
  }
  @Override protected void dump(java.io.FileDescriptor fd,java.io.PrintWriter writer,String[] args){
   if(voice!=null)voice.dump(writer);
-  writer.println("voiceEnabled="+prefs.getBoolean("tap_voice",false));writer.println("voiceAllowed="+(voice!=null&&voice.allowed()));writer.println("voiceActive="+(voice!=null&&voice.active()));writer.println("voicePlayed="+(voice==null?0:voice.played));
+  writer.println("voiceInSilent="+prefs.getBoolean("voice_in_silent",false));writer.println("voiceEnabled="+prefs.getBoolean("tap_voice",false));writer.println("voiceAllowed="+(voice!=null&&voice.allowed()));writer.println("voiceActive="+(voice!=null&&voice.active()));writer.println("voicePlayed="+(voice==null?0:voice.played));
   handler.dump(new android.util.PrintWriterPrinter(writer),"appHandler ");
   writer.println("interactive="+getSystemService(PowerManager.class).isInteractive());
   writer.println("timerCaptionVisible="+(timerCaption!=null&&petVisible&&timerCaption.getVisibility()==View.VISIBLE));

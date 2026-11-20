@@ -15,7 +15,7 @@ final class TapVoice {
   if(Build.VERSION.SDK_INT>=33)context.registerReceiver(receiver,f,Context.RECEIVER_NOT_EXPORTED);else context.registerReceiver(receiver,f);registered=true;
  }
  private AudioAttributes attributes(){return new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_GAME).setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build();}
- boolean allowed(){return VoicePolicy.allowed(prefs.getBoolean("tap_voice",false),audio.getRingerMode(),audio.getStreamVolume(AudioManager.STREAM_MUSIC),context.getSystemService(PowerManager.class).isInteractive(),context.getSystemService(KeyguardManager.class).isKeyguardLocked(),context.getSystemService(NotificationManager.class).getCurrentInterruptionFilter()==NotificationManager.INTERRUPTION_FILTER_ALL);}
+ boolean allowed(){return VoicePolicy.allowed(prefs.getBoolean("tap_voice",false),prefs.getBoolean("voice_in_silent",false),audio.getRingerMode(),audio.getStreamVolume(AudioManager.STREAM_MUSIC),context.getSystemService(PowerManager.class).isInteractive(),context.getSystemService(KeyguardManager.class).isKeyguardLocked(),context.getSystemService(NotificationManager.class).getCurrentInterruptionFilter()==NotificationManager.INTERRUPTION_FILTER_ALL);}
  void play(){
   if(!allowed()){stop();return;}if(player!=null)return;
   try{

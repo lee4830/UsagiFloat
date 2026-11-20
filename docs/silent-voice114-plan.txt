@@ -1,0 +1,2 @@
+User explicitly requested an optional exception to ringer-mode silence/vibrate.
+Keep master tap_voice and existingnineclips; add voice_in_silent defaultfalse, shown only when master enabled. Allow ringer0/1 only when bothtrue. Preserve media volume0,DND,screen/keyguard gating, gesture exclusions, nooverlap and all cleanup. No systemvolume/ringer changes.3new gate tests and native toggles in actual emulatorringer modes, persistence and master/DND/volume precedence. Release1.0.14samekey.

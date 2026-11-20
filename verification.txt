@@ -1,28 +1,28 @@
-UsagiFloat1.0.13 / versionCode14 /2026-11-20
-Opt-in character-tap voice, defaultfalse. Nine local AAC mono clips normalized conservatively, original/background sounds retained. Source pages and exact user-video segment times in voice-sources.json. Intro0–3.5s; kkiyat18.82–20.38s; owung24.62–25.95s. No voice cloning/synthesis, no runtime network permission.
-Policy: optiontrue, ringermodeNORMAL, media volume>0, interactive/unlocked, interruption filterALL; checked before request and async prepared callback. Tap<350ms, unmoved/unheld, excluding caption/drag/multitouch/cancel. One MediaPlayer at a time, no repeat of prior selected clip. TransientMAY_DUCK focus, willPauseWhenDuckedtrue; completion/error/hide/off/focusloss/unplug/disable/destructionreleaseplayerandfocus. Active-only150ms guard catches DND changes unavailable via broadcast without special access onAndroid10+. No idle voice polling or wake lock, no systemvolumechanges.
-70unit tests pass; release build and lint pass. Read-only review found two issues (restricted DND broadcast and automaticduckfocusloss); both fixed and re-reviewed with no remaining blocker. Android11 final signedAPK: native state/MediaPlayer-start counters verify off/on,drag/hold,silent,vibrate,mediazero,DND,liveDNDandvibratestop,nooverlap,screenoff0app/voicequeuedcallbacks,wake/newtap,persistedoptionandstrolltap. Emulator host audio disabled; these are software playback/state tests, not acoustic listening or physical-device routing/quality measurements.
-Nine packagedaudioassets validated as monoAAC44100with0.67–3.51s durations. Existing art/motion assets unchanged.
-Same certificate SHA256:621e1a1e93ebada10110344d4a593631be419cd1ef7c4a140a15d681f2c50fde
-APK SHA256: d39ac9e9a2d71ba8d31c6a6c6e0fbcf2affa0f6f4d11f06ac6425ae1318ad99d
+UsagiFloat1.0.14 / versionCode15 /2026-11-20
+Adds explicit defaultfalse voice_in_silent nested under master tap_voice. Masterfalse alwaysblocks. Overridefalse preserves1.0.13 normalringeronly; overridetrue accepts normal/silent/vibrate, still requiring media volume>0, screeninteractive/unlocked and DNDfilterALL. Unknownringer values rejected. UI hides child whenmasteroff but retains storedchoice; changesrefreshactivepolicy.
+Ninevoiceassets and playback lifecycle unchanged from1.0.13: shorttaponly,nooverlap,async localmedia, transientfocus, releaseonoff/hidden/focusloss/unplug/disabled.150ms policyguard onlywhilepreparing/playing, canceledonstop. No systemringer/volumechanges, noidlevoicepoll, no runtime network.
+73unit tests passed and signedrelease/lintpassed. Read-onlyreview found no blocker. Android11 final signedAPK verifiesactualSystemUI silent/vibrate withDNDoff, defaultblock, explicitoverrideplay, media0/DND/masterprecedence, childvisibility/persistence, switchingoverrideoff, persistedstrollsilentplay, screenoff0queuedapp/voicecallbacks. Test uses SystemUI bell because public AudioManager.setRingerMode(SILENT) also turnsDND on in this emulator. Physicalspeaker/listening/routingquality not measured; native tests inspectMediaPlayer starts/state.1.0.13fullvoice lifecycle native suite passed before this delta.
+Same release certificate SHA256:621e1a1e93ebada10110344d4a593631be419cd1ef7c4a140a15d681f2c50fde
+APK SHA256: 11a03a352ab8aaa3e9e16b31fdd5b06b0248b5d9cc8a418d1a8e96efb5abfebb
 
-PASS quiet: option off
-PASS voice: normal mode and option on
-PASS quiet: drag
-PASS quiet: long press
-PASS quiet: vibrate
-PASS quiet: silent
-PASS quiet: media volume zero
-PASS quiet: DND
-PASS voice: restored normal
-PASS live DND stops active long clip
-PASS live vibrate stops active long clip
-PASS voice: normal after live mute
-PASS screen-off releases voice and leaves0app callbacks
-PASS voice: wake followed by new tap
-PASS quiet: disabled after recreation
-PASS voice: stroll tap
-VOICE113 NATIVE CHECKS PASSED
+SystemUI mode SILENT DNDoff
+PASS quiet silent defaultoff
+SystemUI mode VIBRATE DNDoff
+PASS quiet vibrate defaultoff
+SystemUI mode VIBRATE DNDoff
+PASS voice vibrate overrideon
+SystemUI mode SILENT DNDoff
+PASS voice silent overrideon
+PASS quiet override does not override mediazero
+PASS quiet override does not overrideDND
+SystemUI mode SILENT DNDoff
+PASS quiet masteroff wins and childhidden
+PASS voice masteron restores retained override
+PASS quiet overrideoff blocks silent again
+PASS voice persisted override in stroll silent
+PASS screenoff0callbacks
+SystemUI mode NORMAL DNDoff
+VOICE114 NATIVE CHECKS PASSED
 
 yaha duration=3.400000 mono AAC44100
 una duration=0.671995 mono AAC44100
@@ -34,3 +34,4 @@ intro duration=3.503991 mono AAC44100
 kkiyat duration=1.560000 mono AAC44100
 owung duration=1.330000 mono AAC44100
 9 VOICE ASSETS VALIDATED
+All9audiofiles byte-identical to1.0.13
