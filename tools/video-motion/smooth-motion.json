@@ -1,0 +1,83 @@
+[
+  {
+    "clip": "walk",
+    "body_reference_width": 115,
+    "scale": 1.2,
+    "target_body_width": 138,
+    "key_frames": [
+      0,
+      2,
+      5,
+      8,
+      10
+    ],
+    "count": 12
+  },
+  {
+    "clip": "look",
+    "body_reference_width": 150,
+    "scale": 0.92,
+    "target_body_width": 138,
+    "key_frames": [
+      0,
+      3,
+      9,
+      13,
+      16,
+      21
+    ],
+    "count": 30
+  },
+  {
+    "clip": "wiggle",
+    "body_reference_width": 151,
+    "scale": 0.9139072847682119,
+    "target_body_width": 138,
+    "key_frames": [
+      0,
+      2,
+      5,
+      7,
+      10,
+      12,
+      15,
+      17,
+      20,
+      22,
+      25,
+      27,
+      30,
+      32,
+      35,
+      37,
+      40,
+      42,
+      45,
+      47,
+      50,
+      52,
+      55,
+      57,
+      61,
+      63,
+      66,
+      68,
+      71,
+      73,
+      76
+    ],
+    "count": 78
+  },
+  {
+    "clip": "hop",
+    "body_reference_width": 153,
+    "scale": 0.9019607843137255,
+    "target_body_width": 138,
+    "key_frames": [
+      0,
+      23,
+      27
+    ],
+    "count": 30
+  }
+]

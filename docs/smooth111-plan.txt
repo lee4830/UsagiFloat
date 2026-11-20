@@ -1,0 +1,4 @@
+1.0.11: preserve original four poses, normalize main body widths with one scale per clip and common ground anchor; retain a small walking bounce.
+Offline bidirectional optical-flow interpolation across held source poses, including the walk loop. Six short precomputed position/scale settle transitions between walking and actions; intact drawings avoid cross-outfit facial morph artifacts. Same 30fps runtime budget, no runtime flow computation.
+Smooth travel pace and bounded acceleration/braking. Finish current walk cycle before a transition; play every idle clip fully. Hidden/held cancels all callbacks as before.
+Validation: motion regression tests including acceleration, transitions, cancellation; inspect generated contact sheets; release/lint; Android11 smoke/drag/off-wake; same-key signing and GitHub release.

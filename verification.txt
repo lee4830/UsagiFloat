@@ -1,66 +1,21 @@
-UsagiFloat1.0.10 /2026-11-20
-Package kr.personal.usagifloat; versionCode11; minSdk28/targetSdk36.
-Same release certificate SHA256:621e1a1e93ebada10110344d4a593631be419cd1ef7c4a140a15d681f2c50fde.
-APK SHA256: 282ba83e052a28945910eff9cfb5cb3a9041df614d3f63a71f5ab98e4a92f679
+UsagiFloat1.0.11 / versionCode12 /2026-11-20
+Stroll: four original video clips normalized to138px calibrated body reference width (exclude ears/hands), fixed scale per clip, common ground. Walking scene vertical movement reduced to25% while retaining bounce. Offline centroid-aligned optical-flow interpolation over short source holds at existing30fps. Original150frame durations retained. Six100ms settle transitions (18additional frames) interpolate position and uniform scale without morphing different face/outfit drawings. A drawing handoff remains; this is not perfect recreation of full original scene movement. Some interpolated ear edges may soften briefly.
+Travel: continuous burst pace, bounded acceleration/braking; finish walk cycle before bridge. Regression verifies source last frame precedes each outgoing bridge. Runtime does no optical flow, keeps one33ms motion callback; additional decoded bridge atlas about6MiB.
+66unit tests passed; signed release build and lint completed. All168frame alpha margins/nonempty/index checks passed. Read-only code review found no remaining blocking issue.
+Android11(API30) dedicated emulator final signed APK: all four behaviors/six bridges observed within screen bounds, pixels change after drag and after unlock; screen off12s has0app callbacks/0rendered frames and unchanged pose. No physical-phone current/temperature measurement; OS notification/service costs cannot be guaranteed zero. Manual12assets unchanged.
+Same certificate SHA256:621e1a1e93ebada10110344d4a593631be419cd1ef7c4a140a15d681f2c50fde
+APK SHA256: c0a7ef088e57639d5c664845eb104676e15121c51b9f54e459a55f700475ef82
 
-Body normalization
-1.0.9normalized the longest whole silhouette extent, so spread/long ears reduced the body.1.0.10uses a calibrated main rounded-body width excluding ears, tails, props and motion trails. One fixed transform per sequence,640px transparent canvas with300px reference body width/common anchor. Manual overlay/preview reserve1.25times prior canvas space to avoid shrinking the body; full canvas+caption constrained to safe screen bounds. Actual reference-row alpha spans296–316px across12assets. All398source frames, individual durations, alpha and margins verified. Original source-edge cropping and natural squash/stretch remain; no invented body parts. Code/visual reviewer found no blocking issue.
+smooth stroll unique frames 6 samples 6
+Observed poses [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+stroll after drag unique frames 6 samples 6
+PASS screen off:0app callbacks,0frames, unchanged pose for12s
+stroll wake unique frames 5 samples 6
+SMOOTH111 NATIVE CHECKS PASSED
 
-Screen-off finding/fix
-Previously GIF/random/stroll/rest stopped, but visibility reconciliation still posted every1s of uptime. Those callbacks did not wake deep sleep but could run when the CPU remained awake. Now non-interactive state cancels visibility polling and auto-stop callback too. Elapsed timer deadline continues; screen-on re-arms remaining time or stops before displaying if expired.1s reconciliation is retained while screen-on (including locked) for missed unlock recovery. App has no wake-lock/KEEP_SCREEN_ON/alarm/network permission/path.
-
-Battery evidence and limits
-Android11(API30) dedicated emulator, screen non-interactive while host CPU remains available. Manual, random+rest+timer, stroll+rest+timer each measured12s after settling:0app Handler callbacks and0rendered frames. Final process utime+stime tick increases were0,1,0respectively; CLK_TCK=100so the maximum was0.01CPU seconds over12wall seconds. Each resumed on wake. This small nonzero process activity is another reason not to claim absolute zero consumption. Earlier samples were all0ticks, showing run-to-run variation. This is evidence of stopped application work, not a physical phone current or battery measurement. OS-managed foreground-service/notification/process costs cannot be guaranteed zero; no heat cause or battery percentage claim.
-
-63unit tests passed; Release build/lint completed (see build report for existing warnings). Full native suite tested off/wake in3modes, elapsed1minute deadline while off with no queued callbacks, no overlay reappearance on expiry, maximum size/landscape/drag. Geometry and power phases were verified separately on the final signed APK after the screen-off timer help text was clarified; the installed APK was hash-matched to the release build. Test harness uses an overlay-compatible foreground Activity and WindowManager rotation commands; Android Settings intentionally suppresses overlays and is not a valid animation test backdrop.
-
-Reference: Android Handler postDelayed uses uptime, deep sleep adds delay: https://developer.android.com/reference/android/os/Handler#postDelayed(java.lang.Runnable,long)
-
-
-assets.log
-usagi measured body width 299
-usagi PASS 13 encoded frames 1300 ms 413 505
-usagi_soft measured body width 301
-usagi_soft PASS 18 encoded frames 760 ms 401 418
-usagi_cheer measured body width 299
-usagi_cheer PASS 13 encoded frames 1300 ms 412 460
-usagi_closeup measured body width 300
-usagi_closeup PASS 30 encoded frames 2100 ms 300 300
-usagi_hood measured body width 300
-usagi_hood PASS 76 encoded frames 5070 ms 303 303
-usagi_huh measured body width 299
-usagi_huh PASS 25 encoded frames 1800 ms 359 411
-usagi_puri measured body width 296
-usagi_puri PASS 24 encoded frames 960 ms 484 454
-usagi_forest measured body width 299
-usagi_forest PASS 72 encoded frames 2410 ms 307 346
-usagi_tiny measured body width 296
-usagi_tiny PASS 10 encoded frames 1000 ms 340 438
-usagi_room measured body width 297
-usagi_room PASS 17 encoded frames 1700 ms 317 452
-usagi_ears measured body width 316
-usagi_ears PASS 73 encoded frames 5250 ms 575 408
-usagi_dance measured body width 297
-usagi_dance PASS 27 encoded frames 2700 ms 399 438
-12 ASSETS VALIDATED
-
-geometry.log
-maximum manual ears unique frames 6 samples 6
-landscape bounded ears unique frames 7 samples 7
-landscape drag unique frames 7 samples 7
-compact viewport full canvas and caption unique frames 10 samples 10
-PASS maximum body size,landscape,compact safe bounds and drag
-
-device.log
-PASS manual screen-off:0app callbacks,0rendered frames, CPU ticks delta 0 over 12 s
-manual after wake unique frames 6 samples 6
-PASS random-saving-timer screen-off:0app callbacks,0rendered frames, CPU ticks delta 1 over 12 s
-random-saving-timer after wake unique frames 6 samples 6
-PASS stroll-saving-timer screen-off:0app callbacks,0rendered frames, CPU ticks delta 0 over 12 s
-stroll-saving-timer after wake unique frames 3 samples 6
-PASS timer elapsed off,0queued callbacks,expired before showing on wake
-BODY110 NATIVE CHECKS PASSED
-
-final.log
-Final signed APK equals installed native test build: 282ba83e052a28945910eff9cfb5cb3a9041df614d3f63a71f5ab98e4a92f679
-BODY110 FINAL APK CHECK PASSED
+walk 12 frames: nonempty transparent margins and atlas indices OK
+look 30 frames: nonempty transparent margins and atlas indices OK
+wiggle 78 frames: nonempty transparent margins and atlas indices OK
+bow 30 frames: nonempty transparent margins and atlas indices OK
+bridges 18 frames: nonempty transparent margins and atlas indices OK
+168 SMOOTH FRAMES VALIDATED
