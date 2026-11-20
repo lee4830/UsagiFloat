@@ -11,34 +11,27 @@ names=['walk','look','wiggle','hop'];counts=[12,30,78,30]
 # Main rounded body reference widths (exclude ears, hands and motion marks).
 widths=[115,150,151,153];target=138
 xx,yy=np.meshgrid(np.arange(256,dtype=np.float32),np.arange(256,dtype=np.float32))
+def affine_rgba(im,matrix):
+ # Warp premultiplied colors to avoid dark fringes at transparent edges.
+ p=im.astype(np.float32)/255;p[:,:,:3]*=p[:,:,3:]
+ p=cv2.warpAffine(p,matrix,(256,256),flags=cv2.INTER_CUBIC)
+ p=np.clip(p,0,1);p[:,:,:3]/=np.maximum(p[:,:,3:],1/255)
+ return np.uint8(np.clip(p*255,0,255))
 def tween(a,b,t):
- if t<=0:return a.copy()
- if t>=1:return b.copy()
- # Align foreground centroids first so a bow/landing is a trajectory, not a
- # double-exposed face. Restore the interpolated translation after local flow.
+ # Preserve ears, facial lines and original drawing; interpolate only translation.
+ # Dense flow on these small hand-drawn frames caused broken/ghosted ears.
  def center(im):
   alpha=im[:,:,3].astype(float);return np.array([(xx*alpha).sum(),(yy*alpha).sum()])/alpha.sum()
- shift=center(b)-center(a)
- b=cv2.warpAffine(b,np.float32([[1,0,-shift[0]],[0,1,-shift[1]]]),(256,256),flags=cv2.INTER_LINEAR)
- # Premultiplied RGBA prevents dark/colored transparent-edge halos.
- af=a.astype(np.float32)/255;bf=b.astype(np.float32)/255
- af[:,:,:3]*=af[:,:,3:];bf[:,:,:3]*=bf[:,:,3:]
- def gray(p):return cv2.cvtColor(np.uint8(np.clip((p[:,:,:3]+.35*(1-p[:,:,3:]))*255,0,255)),cv2.COLOR_RGB2GRAY)
- ga,gb=gray(af),gray(bf)
- flow=cv2.DISOpticalFlow_create(cv2.DISOPTICAL_FLOW_PRESET_MEDIUM)
- flow.setFinestScale(0)
- f=cv2.GaussianBlur(flow.calc(ga,gb,None),(0,0),3)
- r=cv2.GaussianBlur(flow.calc(gb,ga,None),(0,0),3)
- f=np.clip(f,-24,24);r=np.clip(r,-24,24)
- wa=cv2.remap(af,xx-t*f[:,:,0],yy-t*f[:,:,1],cv2.INTER_LINEAR,borderMode=cv2.BORDER_CONSTANT)
- wb=cv2.remap(bf,xx-(1-t)*r[:,:,0],yy-(1-t)*r[:,:,1],cv2.INTER_LINEAR,borderMode=cv2.BORDER_CONSTANT)
- p=wa*(1-t)+wb*t
- p[:,:,:3]/=np.maximum(p[:,:,3:],1/255)
- p[p[:,:,3]<.025]=0
- return cv2.warpAffine(np.uint8(np.clip(p*255,0,255)),np.float32([[1,0,t*shift[0]],[0,1,t*shift[1]]]),(256,256),flags=cv2.INTER_LINEAR)
+ ca,cb=center(a),center(b);source=a if t<.5 else b;origin=ca if t<.5 else cb
+ shift=ca*(1-t)+cb*t-origin
+ return affine_rgba(source,np.float32([[1,0,shift[0]],[0,1,shift[1]]]))
 def atlas(frames,path):
  sheet=Image.new('RGBA',(2048,math.ceil(len(frames)/8)*256))
- for i,f in enumerate(frames):sheet.paste(Image.fromarray(f),(i%8*256,i//8*256))
+ for i,f in enumerate(frames):
+  f=f.copy();alpha=f[:,:,3]
+  # Subpixel outer-edge reduction only; eyes/mouth/internal stroke RGB untouched.
+  f[:,:,3]=np.uint8(.65*alpha+.35*cv2.erode(alpha,np.ones((3,3),np.uint8)))
+  sheet.paste(Image.fromarray(f),(i%8*256,i//8*256))
  sheet.save(path)
 clips=[];report=[]
 for name,n,width in zip(names,counts,widths):
@@ -50,7 +43,7 @@ for name,n,width in zip(names,counts,widths):
   # Remove scene vertical travel, retain a gentle 25% bounce in walking.
   dy=(ground-b[3])*.75 if name=='walk' else 0
   mat=np.float32([[scale,0,128-cx*scale],[0,scale,233-ground*scale+dy*scale]])
-  frames.append(cv2.warpAffine(np.array(im),mat,(256,256),flags=cv2.INTER_CUBIC))
+  frames.append(affine_rgba(np.array(im),mat))
  # Cluster source holds; avoid treating compression noise as a new pose.
  keys=[0]
  for i in range(1,n):
@@ -81,7 +74,7 @@ for a,b in [(0,1),(0,2),(0,3),(1,0),(2,0),(3,0)]:
   source=first if t<.5 else last;origin=ca if t<.5 else cb
   center=ca*(1-t)+cb*t;scale=1-.025*math.sin(math.pi*t)
   matrix=np.float32([[scale,0,center[0]-origin[0]*scale],[0,scale,center[1]-origin[1]*scale]])
-  bridges.append(cv2.warpAffine(source,matrix,(256,256),flags=cv2.INTER_CUBIC))
+  bridges.append(affine_rgba(source,matrix))
 atlas(bridges,out/'motion_bridges.png')
 (Path(__file__).parent/'smooth-motion.json').write_text(json.dumps(report,indent=2))
 # Inspect endpoints, halfway poses, and every transition on a neutral backdrop.

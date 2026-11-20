@@ -1,21 +1,24 @@
-UsagiFloat1.0.11 / versionCode12 /2026-11-20
-Stroll: four original video clips normalized to138px calibrated body reference width (exclude ears/hands), fixed scale per clip, common ground. Walking scene vertical movement reduced to25% while retaining bounce. Offline centroid-aligned optical-flow interpolation over short source holds at existing30fps. Original150frame durations retained. Six100ms settle transitions (18additional frames) interpolate position and uniform scale without morphing different face/outfit drawings. A drawing handoff remains; this is not perfect recreation of full original scene movement. Some interpolated ear edges may soften briefly.
-Travel: continuous burst pace, bounded acceleration/braking; finish walk cycle before bridge. Regression verifies source last frame precedes each outgoing bridge. Runtime does no optical flow, keeps one33ms motion callback; additional decoded bridge atlas about6MiB.
-66unit tests passed; signed release build and lint completed. All168frame alpha margins/nonempty/index checks passed. Read-only code review found no remaining blocking issue.
-Android11(API30) dedicated emulator final signed APK: all four behaviors/six bridges observed within screen bounds, pixels change after drag and after unlock; screen off12s has0app callbacks/0rendered frames and unchanged pose. No physical-phone current/temperature measurement; OS notification/service costs cannot be guaranteed zero. Manual12assets unchanged.
-Same certificate SHA256:621e1a1e93ebada10110344d4a593631be419cd1ef7c4a140a15d681f2c50fde
-APK SHA256: c0a7ef088e57639d5c664845eb104676e15121c51b9f54e459a55f700475ef82
+UsagiFloat1.0.12 / versionCode13 /2026-11-20
+Root cause: original graph-cut walk mask omitted an ear on side poses before interpolation. Source frame2 left-ear rectangle had only15%alpha coverage.1.0.11also applied dense optical-flow deformation/blending that ghosted ear/face outlines.
+Repair: reconstruct all12walk masks from original line contours, closing intentional gaps only in the mask. SourceRGB unchanged; both tall pink ear interiors validated>99%coverage on every source frame. Final packaged-ear regression fails against1.0.11 and passes all12frames against1.0.12. Every168atlas frames passes nonempty/transparent-margin/index checks.
+Remove dense-flow warping and double-exposure blending. Interpolate whole-drawing translation while preserving the original drawings, discrete pose changes and existing travel acceleration/deceleration. Premultiplied affine resampling removes dark transparent-edge contamination. Outer alpha edge gently reduced by35%blend with1px erosion (~.35px), without changing internal RGB/eyes/mouth. This does not claim substantial thinning of every original stroke.
+Runtime code,30fps schedule, battery suspension and12manual assets unchanged.66unit tests pass; release build/lint pass. Read-only review found no blocking issue. Android11 dedicated emulator final signed APK verified playback, all four behaviors/six bridges, bounds, drag, off12s0app callbacks/0rendered frames, and wake recovery. Physical-phone battery/temperature not measured.
+Same release certificate SHA256:621e1a1e93ebada10110344d4a593631be419cd1ef7c4a140a15d681f2c50fde
+APK SHA256: 0bbc02a433142e228fc037cdd66c0bf068fdf5d5cb4cfe026f3576586d8577b8
 
 smooth stroll unique frames 6 samples 6
 Observed poses [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 stroll after drag unique frames 6 samples 6
 PASS screen off:0app callbacks,0frames, unchanged pose for12s
-stroll wake unique frames 5 samples 6
+stroll wake unique frames 6 samples 6
 SMOOTH111 NATIVE CHECKS PASSED
 
+Prepared 150 normalized/interpolated frames + 18 bridge frames at30fps
 walk 12 frames: nonempty transparent margins and atlas indices OK
 look 30 frames: nonempty transparent margins and atlas indices OK
 wiggle 78 frames: nonempty transparent margins and atlas indices OK
 bow 30 frames: nonempty transparent margins and atlas indices OK
 bridges 18 frames: nonempty transparent margins and atlas indices OK
 168 SMOOTH FRAMES VALIDATED
+
+12/12 packaged walking frames have two intact pink ear interiors
