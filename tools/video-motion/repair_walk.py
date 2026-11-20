@@ -10,6 +10,21 @@ def mask(rgb):
  closed=cv2.morphologyEx(line,cv2.MORPH_CLOSE,np.ones((11,11),np.uint8))
  contours,_=cv2.findContours(closed,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
  alpha=np.zeros_like(line);cv2.drawContours(alpha,[max(contours,key=cv2.contourArea)],-1,255,-1)
+ # Closing the line gaps also bridged the narrow space BETWEEN the ears.
+ # Recover only top-connected background inside the two pink-ear centers.
+ pink=((r>175)&(g>110)&(r-g>25)&(r-b>12)&(b>110)).astype('uint8')
+ n,labels,stats,centers=cv2.connectedComponentsWithStats(pink)
+ ears=sorted([j for j in range(1,n) if stats[j,3]>40 and stats[j,4]>200],key=lambda j:centers[j,0])
+ if len(ears)!=2:raise ValueError('Expected two original pink ears')
+ left,right=ears;x0=int(centers[left,0]);x1=int(centers[right,0])+1
+ bottom=min(rgb.shape[0],max(stats[j,1]+stats[j,3] for j in ears)+12)
+ free=(line[:bottom,x0:x1]==0).astype('uint8')
+ regions,ids,_,_=cv2.connectedComponentsWithStats(free,connectivity=4)
+ exterior=np.unique(ids[0]);exterior=exterior[exterior!=0]
+ gap=np.isin(ids,exterior);alpha[:bottom,x0:x1][gap]=0
+ # Fail closed if a mask/threshold change leaks into either pink ear interior.
+ for j in ears:
+  if np.mean(alpha[labels==j]>0)<.99:raise ValueError('Ear interior damaged')
  return alpha
 if __name__=='__main__':
  cap=cv2.VideoCapture(str(BASE/'compilation-opening.mp4'));frames=[]

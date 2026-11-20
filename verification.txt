@@ -1,37 +1,26 @@
-UsagiFloat1.0.14 / versionCode15 /2026-11-20
-Adds explicit defaultfalse voice_in_silent nested under master tap_voice. Masterfalse alwaysblocks. Overridefalse preserves1.0.13 normalringeronly; overridetrue accepts normal/silent/vibrate, still requiring media volume>0, screeninteractive/unlocked and DNDfilterALL. Unknownringer values rejected. UI hides child whenmasteroff but retains storedchoice; changesrefreshactivepolicy.
-Ninevoiceassets and playback lifecycle unchanged from1.0.13: shorttaponly,nooverlap,async localmedia, transientfocus, releaseonoff/hidden/focusloss/unplug/disabled.150ms policyguard onlywhilepreparing/playing, canceledonstop. No systemringer/volumechanges, noidlevoicepoll, no runtime network.
-73unit tests passed and signedrelease/lintpassed. Read-onlyreview found no blocker. Android11 final signedAPK verifiesactualSystemUI silent/vibrate withDNDoff, defaultblock, explicitoverrideplay, media0/DND/masterprecedence, childvisibility/persistence, switchingoverrideoff, persistedstrollsilentplay, screenoff0queuedapp/voicecallbacks. Test uses SystemUI bell because public AudioManager.setRingerMode(SILENT) also turnsDND on in this emulator. Physicalspeaker/listening/routingquality not measured; native tests inspectMediaPlayer starts/state.1.0.13fullvoice lifecycle native suite passed before this delta.
-Same release certificate SHA256:621e1a1e93ebada10110344d4a593631be419cd1ef7c4a140a15d681f2c50fde
-APK SHA256: 11a03a352ab8aaa3e9e16b31fdd5b06b0248b5d9cc8a418d1a8e96efb5abfebb
+UsagiFloat1.0.15 / versionCode16 /2026-11-20
+Root cause: the11pixel morphologicalclosing used to repair the walk silhouette also sealed the narrow ear-gap entrance, keeping sourcebackground opaque. Corrected in original source mask, not by painting/displaying a fake background.
+Restore top-connected non-line pixels only in bounded corridor between the two pink-ear centers, down to ear-base+12px; original brown outlines block the four-connected flood. Both pink interiors must retain>99%coverage. Final output keeps sourceRGB/ears/head; alpha is transparent in gap. Fixed walk and affectedwalk-transition cells. Other look/wiggle/bow atlases verified byte-identical to1.0.14. Runtime, sound, silent/vibrate option unchanged.
+Regression reproduces on1.0.14; three vertical gap samples+opaquehead+twoears pass across12walk and9walk-derivedtransitionframes. All168atlasframes pass margin/index/nonempty checks. Comparison viewed on contrasting checkerboard. Read-onlyreview found no blocker; explicitconnectivity keyword corrected followingreview.73unit tests pass, release build/lint and same-key signature pass.
+Android11 final signedAPK verifies stroll/allposes/bridges within bounds, drag continuation, screenoff12s0appcallbacks/0renderedframes/unchangedpose, wake playback. Asset tests establish transparency; this is not a physical-phone visual/battery measurement.
+Certificate SHA256:621e1a1e93ebada10110344d4a593631be419cd1ef7c4a140a15d681f2c50fde
+APK SHA256: 0bceebadcc691fa7c360967f70d6428d2f666a5a6d098054fabf7a8bec5dd783
 
-SystemUI mode SILENT DNDoff
-PASS quiet silent defaultoff
-SystemUI mode VIBRATE DNDoff
-PASS quiet vibrate defaultoff
-SystemUI mode VIBRATE DNDoff
-PASS voice vibrate overrideon
-SystemUI mode SILENT DNDoff
-PASS voice silent overrideon
-PASS quiet override does not override mediazero
-PASS quiet override does not overrideDND
-SystemUI mode SILENT DNDoff
-PASS quiet masteroff wins and childhidden
-PASS voice masteron restores retained override
-PASS quiet overrideoff blocks silent again
-PASS voice persisted override in stroll silent
-PASS screenoff0callbacks
-SystemUI mode NORMAL DNDoff
-VOICE114 NATIVE CHECKS PASSED
+smooth stroll unique frames 3 samples 6
+Observed poses [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+stroll after drag unique frames 5 samples 6
+PASS screen off:0app callbacks,0frames, unchanged pose for12s
+stroll wake unique frames 6 samples 6
+SMOOTH111 NATIVE CHECKS PASSED
 
-yaha duration=3.400000 mono AAC44100
-una duration=0.671995 mono AAC44100
-puru duration=1.193991 mono AAC44100
-haa duration=1.193991 mono AAC44100
-wuu duration=1.877007 mono AAC44100
-high duration=0.896009 mono AAC44100
-intro duration=3.503991 mono AAC44100
-kkiyat duration=1.560000 mono AAC44100
-owung duration=1.330000 mono AAC44100
-9 VOICE ASSETS VALIDATED
-All9audiofiles byte-identical to1.0.13
+Prepared 150 normalized/interpolated frames + 18 bridge frames at30fps
+walk 12 frames: nonempty transparent margins and atlas indices OK
+look 30 frames: nonempty transparent margins and atlas indices OK
+wiggle 78 frames: nonempty transparent margins and atlas indices OK
+bow 30 frames: nonempty transparent margins and atlas indices OK
+bridges 18 frames: nonempty transparent margins and atlas indices OK
+168 SMOOTH FRAMES VALIDATED
+12/12 packaged walking frames have two intact pink ear interiors
+
+12/12 ear gaps transparent; two pink ears and head preserved
+9/9 ear gaps transparent; two pink ears and head preserved
