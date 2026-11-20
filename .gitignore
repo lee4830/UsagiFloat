@@ -12,3 +12,5 @@ usagi-signing-backup.zip
 __pycache__/
 *.pyc
 .idea/
+
+tools/gallery/generated/

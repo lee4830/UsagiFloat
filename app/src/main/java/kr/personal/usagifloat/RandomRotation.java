@@ -15,15 +15,18 @@ final class RandomRotation {
  private final Environment env;
  private final Random random;
  private final int count;
+ private int[] pool;
  private final Runnable task=this::tick;
  private boolean enabled,visible,scheduled,stopped;
  private long interval=30_000,remaining=30_000,due;
- RandomRotation(Environment env,Random random,int count){this.env=env;this.random=random;this.count=count;}
+ RandomRotation(Environment env,Random random,int count){this.env=env;this.random=random;this.count=count;this.pool=RandomPool.resolve(true,"",count);}
  static int validSeconds(int value){return value>=1&&value<=3600?value:30;}
- void configure(boolean enabled,int seconds){
+ void configure(boolean enabled,int seconds){configure(enabled,seconds,RandomPool.resolve(true,"",count));}
+ void configure(boolean enabled,int seconds,int[] eligible){
   if(stopped)return;
   long next=validSeconds(seconds)*1000L;
-  if(this.enabled==enabled&&interval==next)return;
+  if(this.enabled==enabled&&interval==next&&java.util.Arrays.equals(pool,eligible))return;
+  pool=eligible.clone();
   cancel();this.enabled=enabled;interval=next;remaining=next;schedule();
  }
  void setVisible(boolean value){
@@ -35,7 +38,7 @@ final class RandomRotation {
  void stop(){stopped=true;enabled=false;cancel();}
  private void cancel(){env.removeCallbacks(task);scheduled=false;}
  private void schedule(){
-  if(stopped||!enabled||!visible||count<2||scheduled)return;
+  if(stopped||!enabled||!visible||pool.length<2||scheduled)return;
   scheduled=true;due=env.now()+remaining;env.postDelayed(task,remaining);
  }
  private void tick(){
@@ -44,8 +47,10 @@ final class RandomRotation {
   if(!env.canSwitch()){remaining=250;schedule();return;}
   int current=env.currentCharacter();
   int next;
-  if(current>=0&&current<count){next=random.nextInt(count-1);if(next>=current)next++;}
-  else next=random.nextInt(count);
+  int currentIndex=-1;for(int i=0;i<pool.length;i++)if(pool[i]==current)currentIndex=i;
+  if(currentIndex>=0){next=random.nextInt(pool.length-1);if(next>=currentIndex)next++;}
+  else next=random.nextInt(pool.length);
+  next=pool[next];
   env.showCharacter(next);
   remaining=interval;schedule();
  }

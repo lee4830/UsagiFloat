@@ -87,7 +87,10 @@ public class MainActivity extends Activity {
   TextView unit=text("초마다  ",14,ink);intervalRow.addView(unit);
   Button apply=button("간격 적용",0xffffd86c);intervalRow.addView(apply,new LinearLayout.LayoutParams(dp(112),dp(48)));
   intervalSettings.addView(intervalRow);gap(intervalSettings,6);
-  intervalSettings.addView(text("1~3,600초 · 같은 캐릭터는 연속으로 나오지 않아요.\n화면을 끄면 전환도 잠시 쉬어요.",12,muted));gap(manualSettings,16);
+  intervalSettings.addView(text("1~3,600초 · 2개 이상 선택하면 연속 반복을 피합니다.\n화면을 끄면 전환도 잠시 쉬어요.",12,muted));gap(manualSettings,16);
+  Button detail=button("랜덤 재생 상세 설정",0xfff0eadd);detail.setContentDescription("랜덤 재생 상세 설정");intervalSettings.addView(detail,new LinearLayout.LayoutParams(-1,dp(48)));
+  TextView poolSummary=text(RandomSettingsDialog.summary(prefs),13,muted);intervalSettings.addView(poolSummary);gap(intervalSettings,8);
+  detail.setOnClickListener(v->RandomSettingsDialog.show(this,prefs,()->{poolSummary.setText(RandomSettingsDialog.summary(prefs));updateRunningCompanion();}));
   TextView intervalStatus=text("적용 중: "+RandomRotation.validSeconds(prefs.getInt("random_seconds",30))+"초마다 변경",13,muted);intervalSettings.addView(intervalStatus);
   seconds.addTextChangedListener(new android.text.TextWatcher(){
    public void beforeTextChanged(CharSequence s,int start,int count,int after){}

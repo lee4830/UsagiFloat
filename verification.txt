@@ -1,97 +1,57 @@
-우사기 둥둥1.0.8 — 2026-11-20
-Package kr.personal.usagifloat; versionCode9; minSdk28 / targetSdk36.
-Same signing certificate SHA256: 621e1a1e93ebada10110344d4a593631be419cd1ef7c4a140a15d681f2c50fde. APK v2 signature verified.
-APK SHA256: bbea8ab836d991166ddceba2748e2c9b24a9cdb5726b8397114fc6eb4182f630
+UsagiFloat1.0.9 /2026-11-20
+Package kr.personal.usagifloat; versionCode10; minSdk28 / targetSdk36.
+Same signing certificate SHA256:621e1a1e93ebada10110344d4a593631be419cd1ef7c4a140a15d681f2c50fde.
+APK SHA256: d6f6e756ccda0e32f99426a3d33f828665f097f91d23581a1d9a3e144a88833f
 
-Battery/heat investigation
-User reported manual mode with Netflix screen left on, playback possibly paused. No phone/model/charging/thermal or battery measurements available. App does not request wake locks or KEEP_SCREEN_ON. Manual mode does not run the wander engine but GIF decoding/drawing continues while screen is on.
-Found Resources-density scaling path:258px original GIF reported677px intrinsic at420dpi even after naive target sizing. Native probe failed against that build. Raw-resource ByteBuffer source removes Resources density scaling; final native check reports258px. Large480px WebP bounded to315px display size. All5animations validated against overlay pixel bounds without original asset changes. Source dimensions are not a measured battery percentage.
-Overlay now actually hardware accelerated (native isHardwareAccelerated=true). Manual mode drops the reference to unused wander atlases. Display-size decode avoids unnecessary pixel dimensions and does not change playback timing/aspect ratio.
-Optional OFF-default saving:30s play/30s still. Character stays visible while GIF/stroll/random callbacks pause. Touch immediately wakes playback; releasing starts a fresh30s play interval. Screenoff hides/stops as before. Native5second rendering sample:50frames while playing,0while resting, with static cropped pixels during rest. This demonstrates paused rendering, not measured physical battery or temperature reduction.
+12 manual animations: original5stable IDs +7new GIFs. New first2source alpha preserved, other5scene backgrounds masked frame by frame. All12use one fixed crop/scale per entire sequence to avoid framewise size pumping.512px transparent canvas,460px maximum sequence extent; original pose/body proportions/cropped source compositions retained. Smaller sources use deterministic Lanczos enlargement, not AI detail reconstruction. Lossless WebP; all original frame counts and every frame duration preserved (independently reviewed). Art source report in tools/gallery/report.json.
 
-Auto stop
-Default unlimited. Minute/hour/day units;1minute minimum,365days maximum; validation uses long arithmetic. Saved duration counts from Start or explicit timer apply/mode change; unrelated settings updates do not extend it. Uses elapsedRealtime so screenoff is included and wallclock changes do not shift it. Handler does not wake phone: during deep sleep cleanup occurs on next system wake; expired overlay is checked before showing. No exact-alarm permission or wakeup alarm. User Stop/house/expiry cancels callbacks and service notification.
+Random detail dialog: all12(default) or selected IDs; static thumbnails; save/cancel; minimum1validation; singleton no rotation callback. Custom selection retained when all mode chosen. Invalid persisted data falls back to all. Live settings immediately replace excluded current image. UPDATE leaves shutdown deadline untouched. Main manual choice retained separately.
 
-Remaining-time caption (user-added)
-DefaultON option under timedsettings.10sp translucent pill under square character, single FrameLayout and window;20dp reserved below image. Toggle uses UPDATE without rearming timer. Existing1s visibility reconciliation updates only changed text; rounded minutes above60s, seconds in final60s. No extra handler/window; safe bounds include caption, house hit target uses image centre. Above rendering50/0sample had timer disabled: visible countdown text may redraw during rest, especially in the final minute. Caption lifecycle/geometry independent read-only review found no important defects.
+Verification:58JUnit tests,0failures/errors. Gradle testDebugUnitTest assembleRelease lintRelease successful; lint19warnings/0errors. Read-only review found no important defect. Android11(API30) dedicated emulator checked empty/cancel/subset/singleton/all/persistence, native animation of all12, new cutout drag/unlock, countdown preservation. Final1minute expiry is checked on1.0.9APK; caption toggle and house-drop regressions were previously validated on1.0.8 and their code is unchanged. No physical device thermal/battery measurement. Other Android versions not newly tested.
 
-Verification
-51unit tests,0failures/errors. Gradle testDebugUnitTest assembleRelease lintRelease successful. Lint0errors/19warnings, not warning-free. Independent read-only review including ByteBuffer lifetime found no important bugs. Native tests restricted to Android11(API30) dedicated emulator, no physical phone operations.
-Full timer UI/hour/day/invalid-input/update/no-resurrection suite ran before final ByteBuffer-only source change; timer/service logic identical. The decoder/saving/all5manual drag and sizing suites ran before the caption container was added. Final delivery APK repeated actual1minute expiry with caption, caption on/off without resetting deadline, drag/bottom bounds/wake, stroll movement, rest-period caption toggles, WebP drag/resume and house dismissal.
 
-timer108-device.log
-PASS unlimited default; hardware acceleration;480px animation decodes to 315
-PASS hours accepted and live countdown applied
-PASS days use long duration; invalid0does not overwrite/restart
-PASS1minute automatic service/overlay shutdown; unrelated character update did not reset: 59.75 seconds
-PASS screen-off time counts; expired overlay does not return on wake
-PASS unlimited cancels saved timer; manual Stop works
-TIMER108 DEVICE CHECKS PASSED
+verify.log
+usagi PASS 13 encoded frames 1300 ms 376 460
+usagi_soft PASS 18 encoded frames 760 ms 441 460
+usagi_cheer PASS 13 encoded frames 1300 ms 412 460
+usagi_closeup PASS 30 encoded frames 2100 ms 460 460
+usagi_hood PASS 76 encoded frames 5070 ms 460 460
+usagi_huh PASS 25 encoded frames 1800 ms 402 460
+usagi_puri PASS 24 encoded frames 960 ms 460 432
+usagi_forest PASS 72 encoded frames 2410 ms 409 460
+usagi_tiny PASS 10 encoded frames 1000 ms 357 460
+usagi_room PASS 17 encoded frames 1700 ms 322 460
+usagi_ears PASS 73 encoded frames 5250 ms 460 326
+usagi_dance PASS 27 encoded frames 2700 ms 419 460
+12 ASSETS VALIDATED
 
-rest108-device.log
-PASS raw-source decoding avoids density upscale: 258
-PASS resting keeps character visible; GIF pixels frozen; rendered frames5s active/rest: 50 0
-PASS30second rest resumes animation automatically
-manual GIF after touching rested character unique frames 5 samples 6
-PASS touching during rest resumes immediately and preserves drag animation
-PASS screen off stops animation; wake starts a fresh play period
-PASS stroll also stops movement/frame work while resting
-PASS manual releases stroll atlas; disabling saving restores continuous GIF
-REST108 DEVICE CHECKS PASSED
+device.log
+PASS empty selection blocked; cancel leaves all mode unchanged
+PASS selected pool only, both eligible animations appear
+singleton continues animating unique frames 5 samples 6
+new cutout after drag unique frames 5 samples 6
+PASS singleton replaces excluded character immediately; countdown not reset
+new cutout after unlock unique frames 3 samples 6
+PASS all mode includes old and new catalog: [0, 2, 3, 4, 5, 7, 8, 9, 10, 11]
+PASS all mode retains custom draft on reopen
+GALLERY109 SELECTION CHECKS PASSED
 
-drag108-device.log
-꼬리 흔들기 decoded 258 258
-꼬리 흔들기 before unique frames 6 samples 6
-꼬리 흔들기 after drag 0 unique frames 6 samples 6
-꼬리 흔들기 after drag 1 unique frames 5 samples 6
-말랑 우사기 decoded 278 315
-말랑 우사기 before unique frames 6 samples 6
-말랑 우사기 after drag 0 unique frames 6 samples 6
-말랑 우사기 after drag 1 unique frames 5 samples 6
-응원 우사기 decoded 282 282
-응원 우사기 before unique frames 6 samples 6
-응원 우사기 after drag 0 unique frames 6 samples 6
-응원 우사기 after drag 1 unique frames 6 samples 6
-팔짱 우사기 decoded 282 282
-팔짱 우사기 before unique frames 6 samples 6
-팔짱 우사기 after drag 0 unique frames 6 samples 6
-팔짱 우사기 after drag 1 unique frames 6 samples 6
-파란 후드 우사기 decoded 315 315
-파란 후드 우사기 before unique frames 6 samples 6
-파란 후드 우사기 after drag 0 unique frames 6 samples 6
-파란 후드 우사기 after drag 1 unique frames 6 samples 6
-finger still down after movement unique frames 6 samples 6
-after releasing held drag unique frames 6 samples 6
-after unlock unique frames 6 samples 6
-DRAG ANIMATION PIXEL CHECKS PASSED
+frames.log
+꼬리 흔들기 unique frames 6 samples 6
+말랑 우사기 unique frames 6 samples 6
+응원 우사기 unique frames 6 samples 6
+팔짱 우사기 unique frames 6 samples 6
+파란 후드 우사기 unique frames 6 samples 6
+갸웃 우사기 unique frames 6 samples 6
+뿌릿 우사기 unique frames 6 samples 6
+숲속 우사기 unique frames 6 samples 6
+꼬마 우사기 unique frames 6 samples 6
+두리번 우사기 unique frames 5 samples 6
+팔랑 귀 우사기 unique frames 6 samples 6
+춤추는 우사기 unique frames 6 samples 6
+GALLERY109 DEVICE CHECKS PASSED
 
-resize108-device.log
-PASS resize 80 dp -> decoded 210 px
-PASS resize 200 dp -> decoded 480 px
-GIF after size changes unique frames 6 samples 6
-RESIZE108 DEVICE CHECKS PASSED
-
-timer108-final-device.log
+caption.log
 final APK manual GIF during timer unique frames 6 samples 6
-PASS final signed APK auto-stops after 59.55 seconds
+PASS final signed APK auto-stops after 59.64 seconds
 TIMER108 FINAL APK CHECK PASSED
-
-caption108-device.log
-PASS default caption enabled; extra strip below square image
-PASS hiding caption removes strip without resetting countdown
-GIF with caption after bottom-edge drag unique frames 5 samples 6
-PASS caption follows drag, stays in safe bounds and preserves GIF playback
-PASS image and caption hide/wake together
-PASS final-minute seconds update; expiry removes entire overlay in 59.72 seconds
-PASS unlimited mode has no caption
-CAPTION108 DEVICE CHECKS PASSED
-
-caption108-rest-house.log
-PASS stroll and caption move as one bounded window
-PASS caption toggles preserve sleep period and countdown
-WebP resumes and drags inside caption container unique frames 6 samples 6
-PASS house dismissal with visible caption removes both image and label
-CAPTION108 REST/HOUSE CHECKS PASSED
-
-Limits: emulator rendering work only; no actual phone power/thermal measurement or new Android12+ run. Cannot establish cause of the reported overheating or claim a specific energy/temperature reduction. Android/OEM policies may stop the service independently. Deep sleep may defer timer cleanup until wake; no wakeup was requested to save power.
-API references: https://developer.android.com/reference/android/graphics/ImageDecoder#createSource(java.nio.ByteBuffer) ; https://developer.android.com/reference/android/graphics/ImageDecoder#setTargetSize(int,int) ; https://developer.android.com/reference/android/os/SystemClock#elapsedRealtime() ; https://developer.android.com/reference/android/view/WindowManager.LayoutParams#FLAG_HARDWARE_ACCELERATED

@@ -22,4 +22,7 @@ public class RandomRotationTest {
  @Test public void allOtherCharactersAreEligibleAndNeverRepeat(){Device d=new Device();start(d,1);boolean[] seen=new boolean[5];for(int i=0;i<100;i++){int old=d.current;d.advance(1000);assertNotEquals(old,d.current);seen[d.current]=true;}for(boolean value:seen)assertTrue(value);}
  @Test public void invalidIntervalsFallBackToDefault(){assertEquals(30,RandomRotation.validSeconds(0));assertEquals(30,RandomRotation.validSeconds(3601));assertEquals(1,RandomRotation.validSeconds(1));assertEquals(3600,RandomRotation.validSeconds(3600));}
  @Test public void manualSelectionRestartsFullInterval(){Device d=new Device();RandomRotation r=start(d,5);d.advance(4000);r.restartInterval();d.advance(1000);assertEquals(0,d.changes);d.advance(4000);assertEquals(1,d.changes);}
+ @Test public void subsetNeverShowsExcludedCharacters(){Device d=new Device();RandomRotation r=start(d,1);r.configure(true,1,new int[]{1,4});for(int i=0;i<50;i++){d.advance(1000);assertTrue(d.current==1||d.current==4);}}
+ @Test public void singletonHasNoRotationTask(){Device d=new Device();RandomRotation r=start(d,1);r.configure(true,1,new int[]{3});assertNull(d.pending);d.advance(10000);assertEquals(0,d.changes);}
+ @Test public void unchangedPoolDoesNotResetDeadline(){Device d=new Device();RandomRotation r=start(d,5);r.configure(true,5,new int[]{1,4});d.advance(4000);r.configure(true,5,new int[]{1,4});d.advance(1000);assertEquals(1,d.changes);}
 }

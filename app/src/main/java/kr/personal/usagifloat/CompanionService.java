@@ -89,7 +89,7 @@ public class CompanionService extends Service {
    restCycle.configure(prefs.getBoolean("power_saving",false));
    if(pet==null)createPet();else resize();
    applyMode();visibilityLoop.start();
-   randomRotation.configure(!wanderEnabled&&prefs.getBoolean("random_enabled",false),prefs.getInt("random_seconds",30));
+   randomRotation.configure(!wanderEnabled&&prefs.getBoolean("random_enabled",false),prefs.getInt("random_seconds",30),RandomSettingsDialog.pool(prefs));
   }catch(Exception e){android.util.Log.e("UsagiFloat","Cannot create overlay",e);Toast.makeText(this,"우사기를 표시하지 못했어요. 표시 권한을 확인해 주세요.",Toast.LENGTH_LONG).show();stopSelf();}
   return START_NOT_STICKY;
  }
@@ -158,7 +158,12 @@ public class CompanionService extends Service {
   int selected=CharacterCatalog.normalize(prefs.getInt("character",0));
   boolean manualChanged=lastManualCharacter!=selected;
   // Random changes never overwrite the user's fixed-character choice.
-  if(currentCharacter<0||manualChanged||!prefs.getBoolean("random_enabled",false))displayCharacter(selected);
+  if(prefs.getBoolean("random_enabled",false)){
+   int[] pool=RandomSettingsDialog.pool(prefs);
+   if(currentCharacter<0||!RandomPool.contains(pool,currentCharacter))displayCharacter(pool[new java.util.Random().nextInt(pool.length)]);
+   else if(manualChanged&&RandomPool.contains(pool,selected))displayCharacter(selected);
+   else if(decodedTarget!=petParams.width)displayCharacter(currentCharacter);
+  }else if(currentCharacter<0||manualChanged||currentCharacter!=selected)displayCharacter(selected);
   else if(decodedTarget!=petParams.width)displayCharacter(currentCharacter);
   lastManualCharacter=selected;
   if(manualChanged&&randomRotation!=null)randomRotation.restartInterval();
